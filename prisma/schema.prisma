@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRoleEnum {
+  super_admin
+  admin
+  customer
+}
+
+model User {
+  id                 String               @id @default(uuid())
+  name               String
+  email              String               @unique
+  password           String
+  role               UserRoleEnum?        @default(customer)
+  contactNo          String
+  address            String
+  profileImg         String
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  Feedback           Feedback[]
+  Blog               Blog[]
+  ReviewAndRating    ReviewAndRating[]
+  Order              Order[]
+  UpcomingOfferOrder UpcomingOfferOrder[]
+
+  @@map("users")
+}
+
+model Feedback {
+  id        String   @id @default(uuid())
+  feedback  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@map("feedbacks")
+}
+
+model Blog {
+  id         String   @id @default(uuid())
+  title      String
+  blog       String
+  contentImg String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+
+  @@map("blogs")
+}
+
+model Service {
+  id              String            @id @default(uuid())
+  title           String
+  price           Int
+  unit            String
+  quantity        Int
+  serviceImg      String
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  category        Category          @relation(fields: [categoryId], references: [id])
+  categoryId      String
+  ReviewAndRating ReviewAndRating[]
+
+  @@map("services")
+}
+
+model Category {
+  id                     String                   @id @default(uuid())
+  title                  String
+  categoryImg            String
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  Service                Service[]
+  upcoming_offer_service upcoming_offer_service[]
+
+  @@map("categories")
+}
+
+model upcoming_offer_service {
+  id         String   @id @default(uuid())
+  title      String
+  price      Int
+  unit       String
+  quantity   Int
+  serviceImg String
+  startDate  String
+  startTime  String
+  endDate    String
+  endTime    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+
+  @@map("upcoming_offer_services")
+}
+
+enum upcomingOfferStatusEnum {
+  booking
+  shipped
+  delivered
+}
+
+model UpcomingOfferOrder {
+  id                    String                   @id @default(uuid())
+  upcomingOfferServices Json
+  createdAt             DateTime                 @default(now())
+  updatedAt             DateTime                 @updatedAt
+  user                  User                     @relation(fields: [userId], references: [id])
+  userId                String
+  takingScheduledDate   String
+  upcomingOfferStatus   upcomingOfferStatusEnum? @default(booking)
+
+  @@map("upcoming_offer_orders")
+}
+
+model ReviewAndRating {
+  id        String   @id @default(uuid())
+  review    String
+  rating    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  service   Service  @relation(fields: [serviceId], references: [id])
+  serviceId String
+
+  @@map("reviews_and_ratings")
+}
+
+enum StatusEnum {
+  pending
+  shipped
+  delivered
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  orderedServices Json
+  status          StatusEnum? @default(pending)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  user            User        @relation(fields: [userId], references: [id])
+  userId          String
+
+  @@map("orders")
+}
