@@ -1,8 +1,11 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import config from '../../../config';
+import { paginationFields } from '../../../constants/pagination';
 import catchAsync from '../../../shared/catchAsync';
+import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
+import { userFilterableFields } from './user.constant';
 import { UserService } from './user.service';
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
@@ -38,7 +41,10 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const result = await UserService.getAllUsers();
+  const filters = pick(req.query, userFilterableFields);
+  const paginationOptions = pick(req.query, paginationFields);
+
+  const result = await UserService.getAllUsers(filters, paginationOptions);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

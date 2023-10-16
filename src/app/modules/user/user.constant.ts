@@ -5,3 +5,7 @@ export const userRoleEnum: IUserRoleEnum[] = [
   'admin',
   'customer',
 ];
+
+export const userSearchableFields = ['email', 'name', 'role'];
+
+export const userFilterableFields = ['searchTerm', 'role', 'page', 'size'];
