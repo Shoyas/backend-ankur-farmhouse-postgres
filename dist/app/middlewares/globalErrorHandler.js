@@ -10,7 +10,6 @@ const client_1 = require("@prisma/client");
 const zod_1 = require("zod");
 const handleClientError_1 = __importDefault(require("../../errors/handleClientError"));
 const handleZodError_1 = __importDefault(require("../../errors/handleZodError"));
-// import { errorlogger } from '../../shared/logger';
 const globalErrorHandler = (error, req, res, next) => {
     config_1.default.env === 'development'
         ? console.log(`Global Error Handler: `, { error })
