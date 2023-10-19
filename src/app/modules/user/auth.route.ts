@@ -28,4 +28,14 @@ router.post(
   UserController.changePassword
 );
 
+router.get(
+  '/profile',
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.CUSTOMER
+  ),
+  UserController.getSingleUserByToken
+);
+
 export const AuthRoute = router;
