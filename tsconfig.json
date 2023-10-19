@@ -1,11 +1,6 @@
 {
-  "include": [
-    "src",
-    "src/app/modules/academicFaculty/academicFaculty.constant.ts",
-    "logs/permission",
-    "logs/userPermission"
-  ], // which files to compile
-  "exclude": ["node_modules"], // which files to skip
+  "include": ["src"], // which file to compile
+  "exclude": ["node_modules"], // which file to skip
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
