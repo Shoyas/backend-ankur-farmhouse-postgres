@@ -79,6 +79,24 @@ const getAllUpcomingOfferOrdersForAdmin = catchAsync(
   }
 );
 
+const updateUpcomingOfferOrder = catchAsync(
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const payload = req.body;
+    const result = await UpcomingOfferOrderService.updateUpcomingOfferOrder(
+      id,
+      payload
+    );
+
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Order updated successfully',
+      data: result,
+    });
+  }
+);
+
 const deleteUpcomingOfferOrder = catchAsync(
   async (req: Request, res: Response) => {
     const result = await UpcomingOfferOrderService.deleteUpcomingOfferOrder(
@@ -97,5 +115,6 @@ export const UpcomingOfferOrderController = {
   createUpcomingOfferOrder,
   getAllUpcomingOfferOrders,
   getAllUpcomingOfferOrdersForAdmin,
+  updateUpcomingOfferOrder,
   deleteUpcomingOfferOrder,
 };

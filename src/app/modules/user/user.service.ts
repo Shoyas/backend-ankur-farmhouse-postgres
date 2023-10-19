@@ -134,7 +134,7 @@ const getAllUsers = async (
 const getSingleUser = async (id: string): Promise<User | null> => {
   const result = await prisma.user.findUnique({
     where: {
-      id,
+      id: id,
     },
   });
   return result;

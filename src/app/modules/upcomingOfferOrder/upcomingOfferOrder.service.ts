@@ -97,6 +97,32 @@ const getAllUpcomingOfferOrdersForAdmin = async (
   };
 };
 
+const updateUpcomingOfferOrder = async (
+  id: string,
+  payload:
+    | (Prisma.Without<
+        Prisma.OrderUpdateInput,
+        Prisma.OrderUncheckedUpdateInput
+      > &
+        Prisma.OrderUncheckedUpdateInput)
+    | (Prisma.Without<
+        Prisma.OrderUncheckedUpdateInput,
+        Prisma.OrderUpdateInput
+      > &
+        Prisma.OrderUpdateInput)
+): Promise<UpcomingOfferOrder> => {
+  const result = await prisma.upcomingOfferOrder.update({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+    },
+    data: payload,
+  });
+  return result;
+};
+
 const deleteUpcomingOfferOrder = async (
   id: string
 ): Promise<UpcomingOfferOrder> => {
@@ -115,5 +141,6 @@ export const UpcomingOfferOrderService = {
   createUpcomingOfferOrder,
   getAllUpcomingOfferOrders,
   getAllUpcomingOfferOrdersForAdmin,
+  updateUpcomingOfferOrder,
   deleteUpcomingOfferOrder,
 };

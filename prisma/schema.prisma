@@ -21,7 +21,7 @@ model User {
   role               UserRoleEnum?        @default(customer)
   contactNo          String
   address            String
-  profileImg         String
+  profileImg         String?
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
   Feedback           Feedback[]
@@ -48,7 +48,7 @@ model Blog {
   id         String   @id @default(uuid())
   title      String
   blog       String
-  contentImg String
+  contentImg String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   user       User     @relation(fields: [userId], references: [id])
@@ -63,7 +63,7 @@ model Service {
   price           Int
   unit            String
   quantity        Int
-  serviceImg      String
+  serviceImg      String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   category        Category          @relation(fields: [categoryId], references: [id])
@@ -76,7 +76,7 @@ model Service {
 model Category {
   id                     String                   @id @default(uuid())
   title                  String
-  categoryImg            String
+  categoryImg            String?
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
   Service                Service[]
@@ -91,7 +91,7 @@ model upcoming_offer_service {
   price      Int
   unit       String
   quantity   Int
-  serviceImg String
+  serviceImg String?
   startDate  String
   startTime  String
   endDate    String

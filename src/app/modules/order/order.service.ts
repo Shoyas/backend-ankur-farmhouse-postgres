@@ -91,6 +91,32 @@ const getAllOrdersForAdmin = async (
   };
 };
 
+const updateOrder = async (
+  id: string,
+  payload:
+    | (Prisma.Without<
+        Prisma.OrderUpdateInput,
+        Prisma.OrderUncheckedUpdateInput
+      > &
+        Prisma.OrderUncheckedUpdateInput)
+    | (Prisma.Without<
+        Prisma.OrderUncheckedUpdateInput,
+        Prisma.OrderUpdateInput
+      > &
+        Prisma.OrderUpdateInput)
+): Promise<Order> => {
+  const result = await prisma.order.update({
+    where: {
+      id,
+    },
+    include: {
+      user: true,
+    },
+    data: payload,
+  });
+  return result;
+};
+
 const deleteOrder = async (id: string): Promise<Order> => {
   const result = await prisma.order.delete({
     where: {
@@ -107,5 +133,6 @@ export const OrderService = {
   createOrder,
   getAllOrders,
   getAllOrdersForAdmin,
+  updateOrder,
   deleteOrder,
 };

@@ -31,6 +31,11 @@ router.post(
   UpcomingOfferOrderController.createUpcomingOfferOrder
 );
 
+router.patch(
+  '/:id',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  UpcomingOfferOrderController.updateUpcomingOfferOrder
+);
 router.delete(
   '/:id',
   auth(

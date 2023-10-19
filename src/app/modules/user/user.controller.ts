@@ -6,6 +6,7 @@ import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { userFilterableFields } from './user.constant';
+import { ILoginUserResponse } from './user.interface';
 import { UserService } from './user.service';
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
@@ -28,7 +29,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'User sign in successfully!',
-    token: others?.token, // Include the token at the top level
+    data: others?.token, // Include the token at the top level
   };
   console.log('expected result pattern: ', responseWithToken);
   // set refresh token into cookie
@@ -37,7 +38,12 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     httpOnly: true,
   };
   res.cookie('refreshToken', refreshToken, cookieOptions);
-  sendResponse(res, responseWithToken);
+  sendResponse<ILoginUserResponse>(res, {
+    statusCode: 200,
+    success: true,
+    message: 'User logged in successfully !',
+    data: result,
+  });
 });
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
@@ -49,7 +55,8 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Users retrieved successfully',
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 

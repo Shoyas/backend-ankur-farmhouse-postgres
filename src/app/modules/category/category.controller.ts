@@ -67,7 +67,7 @@ const getAllServicesByCategoryId = catchAsync(
     sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
-      message: 'Books with associated category data fetched successfully',
+      message: 'Services with associated category data fetched successfully',
       data: result,
     });
   }

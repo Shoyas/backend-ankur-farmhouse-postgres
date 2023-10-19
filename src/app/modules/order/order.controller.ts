@@ -67,6 +67,19 @@ const getAllOrdersForAdmin = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateOrder = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const payload = req.body;
+  const result = await OrderService.updateOrder(id, payload);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Order updated successfully',
+    data: result,
+  });
+});
+
 const deleteOrder = catchAsync(async (req: Request, res: Response) => {
   const result = await OrderService.deleteOrder(req.params.id);
   sendResponse(res, {
@@ -81,5 +94,6 @@ export const OrderController = {
   createOrder,
   getAllOrders,
   getAllOrdersForAdmin,
+  updateOrder,
   deleteOrder,
 };

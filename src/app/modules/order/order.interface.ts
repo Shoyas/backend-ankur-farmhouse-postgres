@@ -7,6 +7,6 @@ export type ICreateOrderInput = {
   createdAt: Date;
 };
 
-export type IOrderFilters = {
+export type IOrderFilters = { 
   searchTerm?: string;
 };

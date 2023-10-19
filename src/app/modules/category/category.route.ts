@@ -9,6 +9,15 @@ const router = express.Router();
 
 router.get('/:id', CategoryController.getSingleCategory);
 router.get('/', CategoryController.getAllCategories);
+router.get(
+  '/services-by-category/:id',
+  auth(
+    ENUM_USER_ROLE.SUPER_ADMIN,
+    ENUM_USER_ROLE.ADMIN,
+    ENUM_USER_ROLE.CUSTOMER
+  ),
+  CategoryController.getAllServicesByCategoryId
+);
 router.post(
   '/create-category',
   auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),

@@ -1,4 +1,4 @@
-import { Category } from '@prisma/client';
+import { Category, Service } from '@prisma/client';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
@@ -66,7 +66,7 @@ const deleteCategory = async (id: string): Promise<Category> => {
 const getAllServicesByCategoryId = async (
   id: string,
   paginationOptions: IPaginationOptions
-): Promise<IGenericResponse<Category[]>> => {
+): Promise<IGenericResponse<Service[]>> => {
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
 

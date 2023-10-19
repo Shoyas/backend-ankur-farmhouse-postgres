@@ -31,6 +31,12 @@ router.post(
   OrderController.createOrder
 );
 
+router.patch(
+  '/:id',
+  auth(ENUM_USER_ROLE.SUPER_ADMIN, ENUM_USER_ROLE.ADMIN),
+  OrderController.updateOrder
+);
+
 router.delete(
   '/:id',
   auth(
