@@ -30,7 +30,8 @@ const getAllFeedbacks = catchAsync(async (req: Request, res: Response) => {
     success: true,
     statusCode: httpStatus.OK,
     message: 'Feedbacks retrieved successfully',
-    data: result,
+    data: result.data,
+    meta: result.meta,
   });
 });
 

@@ -162,10 +162,27 @@ const deleteUser = async (id: string): Promise<User> => {
   return result;
 };
 
-const getSingleUserByToken = async (id: string): Promise<User | null> => {
+const getSingleUserByToken = async (
+  token: string | undefined
+): Promise<User | null> => {
+  if (!token) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Token not found in headers');
+  }
+
+  console.log('Try token', token);
+  // verify token
+  let verifiedToken = null;
+  try {
+    verifiedToken = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
+  } catch (error) {
+    throw new ApiError(httpStatus.FORBIDDEN, 'Invalid token');
+  }
+  console.log('Verified token', verifiedToken);
+  const { userId } = verifiedToken;
+  console.log('Email by token', userId);
   const result = await prisma.user.findUnique({
     where: {
-      id,
+      id: userId,
     },
   });
 

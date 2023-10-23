@@ -30,6 +30,8 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     message: 'User sign in successfully!',
     data: others?.token, // Include the token at the top level
+    id: others?.id,
+    email: others?.email,
   };
   console.log('expected result pattern: ', responseWithToken);
   // set refresh token into cookie
@@ -94,10 +96,34 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getSingleUserByToken = catchAsync(async (req: Request, res: Response) => {
-  const user: any = req.user;
+// const getSingleUserByToken = catchAsync(async (req: Request, res: Response) => {
+//   const token = req.headers.token; // Assuming 'token' is the header key in Postman
+//   console.log('Token in headers:', token);
 
-  const result = await UserService.getSingleUserByToken(user.userId);
+//   const result = await UserService.getSingleUserByToken(token);
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: 'Profile retrieved successfully',
+//     data: result,
+//   });
+// });
+
+const getSingleUserByToken = catchAsync(async (req: Request, res: Response) => {
+  const token = req.headers.authorization;
+
+  if (!token) {
+    // Handle the case when the token is not provided in the headers
+    return res
+      .status(httpStatus.FORBIDDEN)
+      .json({ message: 'Token not found in headers' });
+  }
+
+  const tokenString = Array.isArray(token) ? token[0] : token.toString(); // Convert to a string
+
+  console.log('Token in headers:', tokenString);
+
+  const result = await UserService.getSingleUserByToken(tokenString);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

@@ -4,14 +4,19 @@ export type ILoginUser = {
 };
 
 export type ILoginUserResponse = {
+  id?: string;
   email?: string;
   role?: string;
   token: string;
   refreshToken: string;
 };
 
-export type IRefreshTokenResponse = {
+export type ITokenWithUser = {
+  id?: string;
+  email?: string;
+  role?: string;
   token: string;
+  refreshToken: string;
 };
 
 export type IUserRoleEnum = 'super_admin' | 'admin' | 'customer';
