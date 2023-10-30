@@ -25,7 +25,7 @@ const getAllServices = async (
       OR: serviceSearchableFields.map(field => ({
         [field]: {
           contains: searchTerm,
-          mode: 'insensitive',
+          mode: 'insensitive', 
         },
       })),
     });

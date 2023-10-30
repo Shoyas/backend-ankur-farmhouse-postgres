@@ -183,7 +183,7 @@ const getSingleUserByToken = async (
   const result = await prisma.user.findUnique({
     where: {
       id: userId,
-    },
+    }, 
   });
 
   return result;

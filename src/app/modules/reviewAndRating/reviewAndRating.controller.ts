@@ -31,7 +31,8 @@ const getAllReviewAndRatings = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: 'Review and Rating fetched successfully',
-      data: result,
+      data: result.data,
+      meta: result.meta,
     });
   }
 );

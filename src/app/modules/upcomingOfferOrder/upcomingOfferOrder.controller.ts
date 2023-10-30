@@ -74,7 +74,8 @@ const getAllUpcomingOfferOrdersForAdmin = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: 'Booking Orders retrieved successfully',
-      data: result,
+      data: result.data,
+      meta: result.meta,
     });
   }
 );

@@ -34,7 +34,8 @@ const getAllUpcomingOfferServices = catchAsync(
       success: true,
       statusCode: httpStatus.OK,
       message: 'Upcoming offer service fetched successfully',
-      data: result,
+      data: result.data,
+      meta: result.meta,
     });
   }
 );

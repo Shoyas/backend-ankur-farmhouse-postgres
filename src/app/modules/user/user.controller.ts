@@ -130,7 +130,7 @@ const getSingleUserByToken = catchAsync(async (req: Request, res: Response) => {
     message: 'Profile retrieved successfully',
     data: result,
   });
-});
+}); 
 
 const changePassword = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;

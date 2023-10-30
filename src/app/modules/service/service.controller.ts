@@ -26,7 +26,7 @@ const getAllServices = catchAsync(async (req: Request, res: Response) => {
   );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.OK,
+    statusCode: httpStatus.OK, 
     message: 'Services fetched successfully',
     data: result.data,
     meta: result.meta,

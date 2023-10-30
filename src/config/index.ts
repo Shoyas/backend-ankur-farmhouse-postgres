@@ -8,6 +8,8 @@ export default {
   env: process.env.NODE_ENV,
   port: process.env.PORT,
   database_url: process.env.DATABASE_URL,
+  database_url_option: process.env.DATABASE_URL_TWO,
+
   default_student_pass: process.env.DEFAULT_STUDENT_PASS,
   default_faculty_pass: process.env.DEFAULT_FACULTY_PASS,
   default_admin_pass: process.env.DEFAULT_ADMIN_PASS,
