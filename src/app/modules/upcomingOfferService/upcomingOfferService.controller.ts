@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { paginationFields } from '../../../constants/pagination';
+import { IUploadFile } from '../../../interfaces/file';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
@@ -9,8 +10,13 @@ import { UpcomingOfferServiceService } from './upcomingOfferService.service';
 
 const createUpcomingOfferService = catchAsync(
   async (req: Request, res: Response) => {
+    const payload = req.body;
+    console.log('Payload: ', payload);
+    const file = req.file as IUploadFile;
+    console.log('File: ', file);
     const result = await UpcomingOfferServiceService.createUpcomingOfferService(
-      req.body
+      payload,
+      file
     );
     sendResponse(res, {
       success: true,

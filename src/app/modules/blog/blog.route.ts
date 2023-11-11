@@ -1,5 +1,6 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { ENUM_USER_ROLE } from '../../../enums/user';
+import { FileUploadHelper } from '../../../helpers/FileUploadHelper';
 import auth from '../../middlewares/auth';
 import validateRequest from '../../middlewares/validateRequest';
 import { BlogController } from './blog.controller';
@@ -9,6 +10,7 @@ const router = express.Router();
 
 router.get('/:id', BlogController.getSingleBlog);
 router.get('/', BlogController.getAllBlogs);
+
 router.post(
   '/create-blog',
   auth(
@@ -16,9 +18,15 @@ router.post(
     ENUM_USER_ROLE.ADMIN,
     ENUM_USER_ROLE.CUSTOMER
   ),
-  validateRequest(BlogValidation.createBlogValidation),
-  BlogController.createBlog
+  FileUploadHelper.upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = BlogValidation.createBlogValidation.parse(
+      JSON.parse(req.body.data)
+    );
+    return BlogController.createBlog(req, res, next);
+  }
 );
+
 router.patch(
   '/:id',
   auth(

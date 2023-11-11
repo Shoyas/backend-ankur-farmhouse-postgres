@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import config from '../../../config';
 import { paginationFields } from '../../../constants/pagination';
+import { IUploadFile } from '../../../interfaces/file';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
@@ -10,8 +11,9 @@ import { ILoginUserResponse } from './user.interface';
 import { UserService } from './user.service';
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
-  console.log('Request user: ', req);
-  const result = await UserService.createUser(req.body);
+  const payload = req.body;
+  const file = req.file as IUploadFile;
+  const result = await UserService.createUser(payload, file);
 
   sendResponse(res, {
     success: true,
@@ -130,7 +132,7 @@ const getSingleUserByToken = catchAsync(async (req: Request, res: Response) => {
     message: 'Profile retrieved successfully',
     data: result,
   });
-}); 
+});
 
 const changePassword = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;

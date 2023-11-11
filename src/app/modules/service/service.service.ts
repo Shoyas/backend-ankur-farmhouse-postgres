@@ -1,16 +1,38 @@
 import { Prisma, Service } from '@prisma/client';
+import httpStatus from 'http-status';
+import ApiError from '../../../errors/ApiError';
+import { FileUploadHelper } from '../../../helpers/FileUploadHelper';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
+import { IUploadFile } from '../../../interfaces/file';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
 import { serviceSearchableFields } from './service.constant';
 import { IServiceFilters } from './service.interface';
 
+/*
 const createService = async (serviceData: Service): Promise<Service> => {
   const result = await prisma.service.create({
     data: serviceData,
   });
-  return result;
+  return result; 
+};
+*/
+const createService = async (serviceData: Service, file: IUploadFile) => {
+  const uploadedServiceImage = await FileUploadHelper.uploadToCloudinary(file);
+  if (!uploadedServiceImage) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Image upload failed');
+  }
+  const result = await prisma.service.create({
+    data: {
+      ...serviceData,
+      serviceImg: uploadedServiceImage.secure_url as string,
+    },
+    include: {
+      category: true,
+      ReviewAndRating: true,
+    },
+  });
 };
 
 const getAllServices = async (
@@ -25,7 +47,7 @@ const getAllServices = async (
       OR: serviceSearchableFields.map(field => ({
         [field]: {
           contains: searchTerm,
-          mode: 'insensitive', 
+          mode: 'insensitive',
         },
       })),
     });

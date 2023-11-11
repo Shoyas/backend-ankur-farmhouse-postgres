@@ -1,11 +1,16 @@
 import { Blog, Prisma } from '@prisma/client';
+import httpStatus from 'http-status';
+import ApiError from '../../../errors/ApiError';
+import { FileUploadHelper } from '../../../helpers/FileUploadHelper';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
+import { IUploadFile } from '../../../interfaces/file';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
 import { blogSearchableFields } from './blog.constant';
 import { IBlogFilters } from './blog.interface';
 
+/*
 const createBlog = async (blogData: Blog): Promise<Blog> => {
   const result = await prisma.blog.create({
     data: blogData,
@@ -16,12 +21,33 @@ const createBlog = async (blogData: Blog): Promise<Blog> => {
 
   return result;
 };
+*/
+const createBlog = async (blogData: Blog, file: IUploadFile) => {
+  const uploadedBlogImage = await FileUploadHelper.uploadToCloudinary(file);
+  if (!uploadedBlogImage) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Image upload failed');
+  }
+  // console.log('Data: ', blogData);
+  const result = await prisma.blog.create({
+    data: {
+      ...blogData,
+      contentImg: uploadedBlogImage.secure_url as string,
+    },
+    include: {
+      user: true,
+    },
+  });
+  return result;
+};
 
 const getAllBlogs = async (
   filters: IBlogFilters,
   paginationOptions: IPaginationOptions
 ): Promise<IGenericResponse<Blog[]>> => {
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
   const { searchTerm, ...filtersData } = filters;
+  console.log('Search Term: ', searchTerm);
   const andConditions = [];
 
   if (searchTerm) {
@@ -42,9 +68,6 @@ const getAllBlogs = async (
       })),
     });
   }
-
-  const { page, limit, skip, sortBy, sortOrder } =
-    paginationHelpers.calculatePagination(paginationOptions);
 
   const sortConditions: any = {};
   if (sortBy && sortOrder) {

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { paginationFields } from '../../../constants/pagination';
+import { IUploadFile } from '../../../interfaces/file';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
@@ -8,8 +9,12 @@ import { blogFilterableFields } from './blog.constant';
 import { BlogService } from './blog.service';
 
 const createBlog = catchAsync(async (req: Request, res: Response) => {
-  const result = await BlogService.createBlog(req.body);
-
+  const payload = req.body;
+  console.log('Payload: ', payload);
+  const file = req.file as IUploadFile;
+  console.log('File: ', file);
+  const result = await BlogService.createBlog(payload, file);
+  console.log('Result: ', result);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -19,9 +24,10 @@ const createBlog = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllBlogs = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.body, blogFilterableFields);
+  const filters = pick(req.query, blogFilterableFields);
   const paginationOptions = pick(req.query, paginationFields);
-
+  console.log('Filters: ', filters);
+  console.log('paginationOptions: ', paginationOptions);
   const result = await BlogService.getAllBlogs(filters, paginationOptions);
   sendResponse(res, {
     success: true,

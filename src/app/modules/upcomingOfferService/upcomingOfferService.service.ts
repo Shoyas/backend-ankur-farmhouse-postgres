@@ -1,16 +1,32 @@
 import { Prisma, upcoming_offer_service } from '@prisma/client';
+import httpStatus from 'http-status';
+import ApiError from '../../../errors/ApiError';
+import { FileUploadHelper } from '../../../helpers/FileUploadHelper';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
+import { IUploadFile } from '../../../interfaces/file';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
 import { UpcomingOfferServiceSearchableFields } from './upcomingOfferService.constant';
 import { IUpcomingOfferServiceFilters } from './upcomingOfferService.interface';
 
 const createUpcomingOfferService = async (
-  serviceData: upcoming_offer_service
+  serviceData: upcoming_offer_service,
+  file: IUploadFile
 ): Promise<upcoming_offer_service> => {
+  const uploadedUpcomingOfferServiceImage =
+    await FileUploadHelper.uploadToCloudinary(file);
+  if (!uploadedUpcomingOfferServiceImage) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Image upload Failed');
+  }
   const result = await prisma.upcoming_offer_service.create({
-    data: serviceData,
+    data: {
+      ...serviceData,
+      serviceImg: uploadedUpcomingOfferServiceImage.secure_url as string,
+    },
+    include: {
+      category: true,
+    },
   });
   return result;
 };

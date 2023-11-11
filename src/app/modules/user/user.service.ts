@@ -4,9 +4,11 @@ import httpStatus from 'http-status';
 import { JwtPayload, Secret } from 'jsonwebtoken';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
+import { FileUploadHelper } from '../../../helpers/FileUploadHelper';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
+import { IUploadFile } from '../../../interfaces/file';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
 import { userSearchableFields } from './user.constant';
@@ -17,6 +19,7 @@ import {
   IUserFilters,
 } from './user.interface';
 
+/*
 const createUser = async (userData: User): Promise<User> => {
   // hash password
   userData.password = await bcrypt.hash(
@@ -26,6 +29,27 @@ const createUser = async (userData: User): Promise<User> => {
 
   const result = await prisma.user.create({
     data: userData,
+  });
+  return result;
+};
+*/
+const createUser = async (userData: User, file: IUploadFile) => {
+  // hash password
+  userData.password = await bcrypt.hash(
+    userData.password,
+    Number(config.bycrypt_salt_rounds)
+  );
+
+  const uploadedUserImage = await FileUploadHelper.uploadToCloudinary(file);
+  if (!uploadedUserImage) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Image upload failed');
+  }
+
+  const result = await prisma.user.create({
+    data: {
+      ...userData,
+      profileImg: uploadedUserImage.secure_url as string,
+    },
   });
   return result;
 };
@@ -183,7 +207,7 @@ const getSingleUserByToken = async (
   const result = await prisma.user.findUnique({
     where: {
       id: userId,
-    }, 
+    },
   });
 
   return result;

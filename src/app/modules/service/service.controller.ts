@@ -1,14 +1,28 @@
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import { paginationFields } from '../../../constants/pagination';
+import { IUploadFile } from '../../../interfaces/file';
 import catchAsync from '../../../shared/catchAsync';
 import pick from '../../../shared/pick';
 import sendResponse from '../../../shared/sendResponse';
 import { serviceFilterableFields } from './service.constant';
 import { ServiceService } from './service.service';
 
+/*
 const createService = catchAsync(async (req: Request, res: Response) => {
   const result = await ServiceService.createService(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Service created successfully',
+    data: result,
+  }); 
+});
+*/
+const createService = catchAsync(async (req: Request, res: Response) => {
+  const payload = req.body;
+  const file = req.file as IUploadFile;
+  const result = await ServiceService.createService(payload, file);
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
@@ -26,7 +40,7 @@ const getAllServices = catchAsync(async (req: Request, res: Response) => {
   );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.OK, 
+    statusCode: httpStatus.OK,
     message: 'Services fetched successfully',
     data: result.data,
     meta: result.meta,

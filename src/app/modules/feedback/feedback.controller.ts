@@ -19,7 +19,7 @@ const createFeedback = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllFeedbacks = catchAsync(async (req: Request, res: Response) => {
-  const filters = pick(req.body, feedbackFilterableFields);
+  const filters = pick(req.query, feedbackFilterableFields);
   const paginationOptions = pick(req.query, paginationFields);
 
   const result = await FeedbackService.getAllFeedbacks(
