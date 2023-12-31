@@ -18,6 +18,8 @@
 
 ## Let's See ERDiagram: https://drive.google.com/file/d/1-ma55Mz__RTdzjDomLP2LNV5KDAX465E/view?usp=sharing
 
+## Let's See The Motivation: https://docs.google.com/document/d/1DQJbnK0dP0a33nwZZDucvqSxnHDEWl--6EHDIRr8UUo/edit?usp=sharing
+
 ## Technologies:
 
 - TypeScript
