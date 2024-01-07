@@ -25,5 +25,10 @@ export default {
     apiKey: process.env.CLOUDINARY_API_KEY,
     apiSecret: process.env.CLOUDINARY_API_SECRET,
   },
+  sslCommerz: {
+    storeID: process.env.STORE_ID,
+    storePassword: process.env.STORE_PASS,
+    sslPaymentUrl: process.env.SSL_BASE_PAYMENT_URL,
+    sslValidationUrl: process.env.SSL_BASE_SSL_BASE_VALIDATION_URL,
+  },
 };
- 

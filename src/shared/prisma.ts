@@ -4,7 +4,7 @@ const prisma = new PrismaClient({
   errorFormat: 'minimal',
   datasources: {
     db: {
-      url: process.env.DATABASE_URL || process.env.DATABASE_URL_TWO,
+      url: process.env.DATABASE_URL_TWO || process.env.DATABASE_URL,
     },
   },
 });

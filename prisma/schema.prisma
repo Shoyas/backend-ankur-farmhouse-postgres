@@ -29,6 +29,7 @@ model User {
   ReviewAndRating    ReviewAndRating[]
   Order              Order[]
   UpcomingOfferOrder UpcomingOfferOrder[]
+  Payment            Payment[]
 
   @@map("users")
 }
@@ -153,4 +154,24 @@ model Order {
   userId          String
 
   @@map("orders")
+}
+
+model Payment {
+  id                 String        @id @default(uuid())
+  amount             Int
+  user               User          @relation(fields: [userId], references: [id])
+  userId             String
+  status             PaymentStatus @default(PANDING)
+  transactionId      String
+  paymentGatewayData Json?
+
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PANDING
+  PAID
 }
