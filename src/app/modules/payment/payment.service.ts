@@ -1,57 +1,48 @@
-import axios from 'axios';
-import httpStatus from 'http-status';
-import config from '../../../config';
-import ApiError from '../../../errors/ApiError';
+import prisma from '../../../shared/prisma';
+import { sslService } from '../ssl/ssl.service';
 
-const initPayment = async () => {
-  try {
-    const data = {
-      store_id: config.sslCommerz.storeID,
-      store_passwd: config.sslCommerz.storePassword,
-      total_amount: 100,
-      currency: 'BDT',
-      tran_id: 'REF123', // use unique tran_id for each api call
-      success_url: 'http://localhost:3030/success',
-      fail_url: 'http://localhost:3030/fail',
-      cancel_url: 'http://localhost:3030/cancel',
-      ipn_url: 'http://localhost:3030/ipn',
-      shipping_method: 'Courier',
-      product_name: 'Computer.',
-      product_category: 'Electronic',
-      product_profile: 'general',
-      cus_name: 'Customer Name',
-      cus_email: 'customer@example.com',
-      cus_add1: 'Dhaka',
-      cus_add2: 'Dhaka',
-      cus_city: 'Dhaka',
-      cus_state: 'Dhaka',
-      cus_postcode: '1000',
-      cus_country: 'Bangladesh',
-      cus_phone: '01711111111',
-      cus_fax: '01711111111',
-      ship_name: 'Customer Name',
-      ship_add1: 'Dhaka',
-      ship_add2: 'Dhaka',
-      ship_city: 'Dhaka',
-      ship_state: 'Dhaka',
-      ship_postcode: 1000,
-      ship_country: 'Bangladesh',
-    };
-    const response = await axios({
-      method: 'post',
-      url: config.sslCommerz.sslPaymentUrl,
-      data: data,
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-    });
-    console.log('Hit payment: ', response);
-    return 'Payment request id';
-  } catch (error) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Payment error');
-  }
+const initPayment = async (data: any) => {
+  const paymentSession = await sslService.initPayment({
+    total_amount: data.total_amount,
+    tran_id: data.tran_id, // use unique tran_id for each api call
+    product_name: data.product_name,
+    product_category: data.product_category,
+    cus_name: data.cus_name,
+    cus_email: data.cus_email,
+    cus_add1: data.cus_add1,
+    cus_add2: data.cus_add2,
+    cus_city: data.cus_city,
+    cus_state: data.cus_state,
+    cus_postcode: data.cus_postcode,
+    cus_country: data.cus_country,
+    cus_phone: data.cus_phone,
+    ship_name: data.ship_name,
+    ship_add1: data.ship_add1,
+    ship_add2: data.ship_add2,
+    ship_city: data.ship_city,
+    ship_state: data.ship_state,
+    ship_postcode: data.ship_postcode,
+    ship_country: data.ship_country,
+  });
+  await prisma.payment.create({
+    data: {
+      amount: data.total_amount,
+      transactionId: data.tran_id,
+      userId: data.userId,
+    },
+    include: {
+      user: true,
+    },
+  });
+  return paymentSession.redirectGatewayURL;
+};
+
+const webhook = async (payload: any) => {
+  const result = await sslService.validate(payload);
+  return 'Ok';
 };
 
 export const PaymentService = {
   initPayment,
+  webhook,
 };

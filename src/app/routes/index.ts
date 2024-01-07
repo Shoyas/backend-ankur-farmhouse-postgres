@@ -3,6 +3,7 @@ import { BlogRoute } from '../modules/blog/blog.route';
 import { CategoryRoute } from '../modules/category/category.route';
 import { FeedbackRoute } from '../modules/feedback/feedback.route';
 import { OrderRoute } from '../modules/order/order.route';
+import { PaymentRoutes } from '../modules/payment/payment.route';
 import { ReviewAndRatingRoute } from '../modules/reviewAndRating/reviewAndRating.route';
 import { ServiceRoute } from '../modules/service/service.route';
 import { UpcomingOfferOrderRoute } from '../modules/upcomingOfferOrder/upcomingOfferOrder.route';
@@ -53,6 +54,10 @@ const moduleRoutes = [
   {
     path: '/upcoming-offer-orders',
     route: UpcomingOfferOrderRoute,
+  },
+  {
+    path: '/payment',
+    route: PaymentRoutes,
   },
 ];
 
