@@ -1,5 +1,9 @@
+import { Payment, PaymentStatus, Prisma } from '@prisma/client';
+import { paginationHelpers } from '../../../helpers/paginationHelper';
+import { IGenericResponse } from '../../../interfaces/common';
 import prisma from '../../../shared/prisma';
 import { sslService } from '../ssl/ssl.service';
+import { paymentSearchableFields } from './payment.constant';
 
 const initPayment = async (data: any) => {
   const paymentSession = await sslService.initPayment({
@@ -38,11 +42,109 @@ const initPayment = async (data: any) => {
 };
 
 const webhook = async (payload: any) => {
+  if (
+    !payload ||
+    !payload?.status ||
+    payload?.status !== 'VALID' ||
+    'VALIDATED'
+  ) {
+    return {
+      message: 'Invalid Payment',
+    };
+  }
   const result = await sslService.validate(payload);
-  return 'Ok';
+  if (result?.status !== 'VALID' || 'VALIDATED') {
+    return {
+      message: 'Payment failed',
+    };
+  }
+  const { tran_id } = result;
+  await prisma.payment.updateMany({
+    where: {
+      transactionId: tran_id,
+    },
+    data: {
+      status: PaymentStatus.PAID,
+      paymentGatewayData: payload,
+    },
+  });
+
+  return {
+    message: 'Payment Success',
+  };
+};
+
+const getAllPayment = async (
+  filters: any,
+  paginationOptions: any
+): Promise<IGenericResponse<Payment[]>> => {
+  const { limit, page, skip } =
+    paginationHelpers.calculatePagination(paginationOptions);
+  const { searchTerm, ...filterData } = filters;
+
+  const andConditions = [];
+  if (searchTerm) {
+    andConditions.push({
+      OR: paymentSearchableFields.map(field => ({
+        [field]: {
+          contains: searchTerm,
+          mode: 'insensitive',
+        },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map(key => ({
+        [key]: {
+          equals: (filterData as any)[key],
+        },
+      })),
+    });
+  }
+
+  const whereConditions: Prisma.PaymentWhereInput =
+    andConditions.length > 0
+      ? {
+          AND: andConditions,
+        }
+      : {};
+
+  const result = await prisma.payment.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy:
+      paginationOptions.sortBy && paginationOptions.sortOrder
+        ? { [paginationOptions.sortBy]: paginationOptions.sortOrder }
+        : {
+            createdAt: 'desc',
+          },
+  });
+  const total = await prisma.payment.count({
+    where: whereConditions,
+  });
+  return {
+    data: result,
+    meta: {
+      total,
+      page,
+      limit,
+    },
+  };
+};
+
+const getSinglePaymentById = async (id: string): Promise<Payment | null> => {
+  const result = await prisma.payment.findUnique({
+    where: { id },
+  });
+  return result;
 };
 
 export const PaymentService = {
   initPayment,
   webhook,
+  getAllPayment,
+  getSinglePaymentById,
 };

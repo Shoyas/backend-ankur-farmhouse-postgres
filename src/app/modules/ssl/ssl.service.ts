@@ -59,6 +59,7 @@ const validate = async (data: any) => {
       url: `${config.sslCommerz.sslValidationUrl}?val_id=${data.val_id}&store_id=${config.sslCommerz.storeID}&store_passwd=${config.sslCommerz.storePassword}&format=json`,
     });
     console.log('response: ', response);
+    return response.data;
   } catch (error) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Payment validation error');
   }
