@@ -165,8 +165,9 @@ model Payment {
   transactionId      String
   paymentGatewayData Json?
 
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
+  createdAt      DateTime?        @default(now())
+  updatedAt      DateTime?        @updatedAt
+  PaymentHistory PaymentHistory[]
 
   @@map("payments")
 }
@@ -174,4 +175,26 @@ model Payment {
 enum PaymentStatus {
   PANDING
   PAID
+}
+
+model PaymentHistory {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId String
+
+  transactionId String
+  dueAmount     Int           @default(0)
+  paidAmount    Int           @default(0)
+  paymentMethod PaymentMethod @default(ONLINE)
+  isPaid        Boolean?      @default(false)
+
+  @@map("payment_histories")
+}
+
+enum PaymentMethod {
+  CASH
+  ONLINE
 }
